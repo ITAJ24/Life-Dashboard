@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Life">
+  <meta name="theme-color" content="#f4efe6">
+  <title>Life Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+
+    <header class="greeting">
+      <p class="date" id="today-date"></p>
+      <h1 id="greeting-text">Good morning</h1>
+    </header>
+
+    <!-- 1. Vision -->
+    <section class="card vision" aria-label="Vision">
+      <div class="slideshow" id="slideshow">
+        <div class="slides" id="slides"></div>
+        <div class="slide-empty" id="slide-empty" hidden>
+          <p>Add photos to the <code>photos</code> folder and list them in
+            <code>photos/photos.js</code> to fill your vision board.</p>
+        </div>
+        <button class="slide-nav prev" id="slide-prev" aria-label="Previous photo">&#8249;</button>
+        <button class="slide-nav next" id="slide-next" aria-label="Next photo">&#8250;</button>
+        <div class="slide-dots" id="slide-dots"></div>
+      </div>
+    </section>
+
+    <div class="columns">
+
+      <!-- 2. Goals -->
+      <section class="card" aria-labelledby="goals-title">
+        <h2 id="goals-title">Goals</h2>
+        <form class="add-form" id="goal-form" autocomplete="off">
+          <input type="text" id="goal-input" placeholder="Add a big goal…" aria-label="New goal" enterkeyhint="done">
+          <button type="submit" class="btn">Add</button>
+        </form>
+        <ul class="list" id="goal-list"></ul>
+        <p class="empty" id="goal-empty">No goals yet. What do you want to make happen?</p>
+      </section>
+
+      <!-- 3. Today's to-do list -->
+      <section class="card" aria-labelledby="todo-title">
+        <div class="card-head">
+          <h2 id="todo-title">Today</h2>
+          <span class="count" id="todo-count"></span>
+        </div>
+        <form class="add-form" id="todo-form" autocomplete="off">
+          <input type="text" id="todo-input" placeholder="Add a task…" aria-label="New task" enterkeyhint="done">
+          <button type="submit" class="btn">Add</button>
+        </form>
+        <ul class="list" id="todo-list"></ul>
+        <p class="empty" id="todo-empty">Nothing on the list. Enjoy the calm.</p>
+        <button class="btn-quiet" id="clear-done" hidden>Clear finished</button>
+      </section>
+
+    </div>
+
+    <footer class="hint">
+      Shortcuts: <kbd>G</kbd> new goal · <kbd>T</kbd> new task · <kbd>←</kbd> <kbd>→</kbd> photos · <kbd>Esc</kbd> cancel
+    </footer>
+  </main>
+
+  <script src="photos/photos.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
