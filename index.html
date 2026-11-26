@@ -3,71 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0f0e0d">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Life">
-  <meta name="theme-color" content="#f4efe6">
   <title>Life Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/vendor/supabase.js" defer></script>
+  <script type="module" src="js/main.js"></script>
 </head>
 <body>
-  <main class="page">
+  <div class="page">
 
-    <header class="greeting">
-      <p class="date" id="today-date"></p>
-      <h1 id="greeting-text">Good morning</h1>
+    <!-- Date, greeting, daily tip -->
+    <header class="top">
+      <div class="hello">
+        <p class="eyebrow" id="today-date"></p>
+        <h1 id="greeting">Hello</h1>
+      </div>
+      <aside class="tip" aria-label="Tip of the day">
+        <p class="eyebrow">Today's lesson · <span id="tip-topic"></span></p>
+        <p class="tip-text" id="tip-text"></p>
+      </aside>
     </header>
 
-    <!-- 1. Vision -->
-    <section class="card vision" aria-label="Vision">
-      <div class="slideshow" id="slideshow">
-        <div class="slides" id="slides"></div>
-        <div class="slide-empty" id="slide-empty" hidden>
-          <p>Add photos to the <code>photos</code> folder and list them in
-            <code>photos/photos.js</code> to fill your vision board.</p>
-        </div>
-        <button class="slide-nav prev" id="slide-prev" aria-label="Previous photo">&#8249;</button>
-        <button class="slide-nav next" id="slide-next" aria-label="Next photo">&#8250;</button>
-        <div class="slide-dots" id="slide-dots"></div>
-      </div>
+    <p class="banner" id="demo-banner" hidden>
+      Demo mode: everything saves on this device only. Connect Supabase in <code>js/config.js</code> to sync.
+    </p>
+
+    <!-- Sign in -->
+    <section class="signin panel" id="signin" hidden>
+      <h2>Welcome back</h2>
+      <p class="muted">Sign in with your email to open your dashboard.</p>
+      <form id="signin-email" class="stack" autocomplete="on">
+        <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Email" enterkeyhint="send">
+        <button class="btn primary block" type="submit">Email me a sign-in code</button>
+      </form>
+      <form id="signin-code" class="stack" hidden autocomplete="off">
+        <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="Code from the email" required aria-label="Sign-in code" enterkeyhint="go">
+        <button class="btn primary block" type="submit">Sign in</button>
+        <button class="btn ghost block" type="button" id="signin-back">Use a different email</button>
+      </form>
+      <p class="muted small" id="signin-msg" role="status"></p>
     </section>
 
-    <div class="columns">
+    <main id="app" hidden>
+      <nav class="jump" aria-label="Sections">
+        <a href="#vision">Vision</a>
+        <a href="#tasks">Today</a>
+        <a href="#goals">Goals</a>
+        <a href="#programs">Programs</a>
+      </nav>
 
-      <!-- 2. Goals -->
-      <section class="card" aria-labelledby="goals-title">
-        <h2 id="goals-title">Goals</h2>
-        <form class="add-form" id="goal-form" autocomplete="off">
-          <input type="text" id="goal-input" placeholder="Add a big goal…" aria-label="New goal" enterkeyhint="done">
-          <button type="submit" class="btn">Add</button>
-        </form>
-        <ul class="list" id="goal-list"></ul>
-        <p class="empty" id="goal-empty">No goals yet. What do you want to make happen?</p>
-      </section>
-
-      <!-- 3. Today's to-do list -->
-      <section class="card" aria-labelledby="todo-title">
-        <div class="card-head">
-          <h2 id="todo-title">Today</h2>
-          <span class="count" id="todo-count"></span>
+      <!-- Vision -->
+      <section class="vision" id="vision" aria-label="Vision board">
+        <div class="slideshow" id="slideshow">
+          <div class="slides" id="slides"></div>
+          <div class="vision-empty">
+            <p class="serif">Your vision board</p>
+            <p class="muted">Add photos of your proudest moments and the life you're building.</p>
+          </div>
+          <button class="slide-nav prev" id="slide-prev" type="button" aria-label="Previous photo">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <button class="slide-nav next" id="slide-next" type="button" aria-label="Next photo">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+          <div class="slide-dots" id="slide-dots"></div>
+          <div class="vision-actions">
+            <button class="chip" id="photo-manage" type="button" hidden>Manage</button>
+            <label class="chip">
+              <span id="photo-add-label">+ Add photos</span>
+              <input type="file" id="photo-input" accept="image/*" multiple hidden>
+            </label>
+          </div>
         </div>
-        <form class="add-form" id="todo-form" autocomplete="off">
-          <input type="text" id="todo-input" placeholder="Add a task…" aria-label="New task" enterkeyhint="done">
-          <button type="submit" class="btn">Add</button>
-        </form>
-        <ul class="list" id="todo-list"></ul>
-        <p class="empty" id="todo-empty">Nothing on the list. Enjoy the calm.</p>
-        <button class="btn-quiet" id="clear-done" hidden>Clear finished</button>
       </section>
 
-    </div>
+      <div class="grid">
+        <!-- Today's tasks -->
+        <section class="panel" id="tasks" aria-labelledby="tasks-title">
+          <div class="panel-head">
+            <h2 id="tasks-title">Today</h2>
+            <span class="count" id="task-count"></span>
+          </div>
+          <form id="task-form" class="add-form" autocomplete="off">
+            <input type="text" name="text" placeholder="Add a task…" aria-label="New task" enterkeyhint="done">
+            <div class="add-row">
+              <label class="date-pill">
+                <span>Due</span>
+                <input type="date" name="due" aria-label="Due date (optional)">
+              </label>
+              <button class="btn primary" type="submit">Add</button>
+            </div>
+          </form>
+          <ul class="list" id="task-list"></ul>
+          <p class="empty" id="task-empty">A clear list. Add what matters today.</p>
+          <details class="done-group" id="done-group" hidden>
+            <summary>Done <span class="n"></span></summary>
+            <ul class="list" id="done-list"></ul>
+            <p class="fine"></p>
+          </details>
+        </section>
 
-    <footer class="hint">
-      Shortcuts: <kbd>G</kbd> new goal · <kbd>T</kbd> new task · <kbd>←</kbd> <kbd>→</kbd> photos · <kbd>Esc</kbd> cancel
-    </footer>
-  </main>
+        <!-- Goals -->
+        <section class="panel" id="goals" aria-labelledby="goals-title">
+          <div class="panel-head">
+            <h2 id="goals-title">Goals</h2>
+          </div>
+          <form id="goal-form" class="add-form inline" autocomplete="off">
+            <input type="text" name="title" placeholder="Add a big goal…" aria-label="New goal" enterkeyhint="done">
+            <button class="btn primary" type="submit">Add</button>
+          </form>
+          <ul class="goal-list" id="goal-list"></ul>
+          <p class="empty" id="goal-empty">What are you working toward? Add a goal, then break it into steps.</p>
+        </section>
 
-  <script src="photos/photos.js"></script>
-  <script src="app.js"></script>
+        <!-- Programs & scholarships -->
+        <section class="panel wide" id="programs" aria-labelledby="programs-title">
+          <div class="panel-head">
+            <h2 id="programs-title">Programs &amp; scholarships</h2>
+            <button class="btn primary small" id="program-add" type="button">+ Add</button>
+          </div>
+          <p class="muted small sub">Sorted by nearest deadline.</p>
+          <ul class="program-list" id="program-list"></ul>
+          <p class="empty" id="program-empty">Track programs and scholarships you're interested in, applying to, or waiting on.</p>
+        </section>
+      </div>
+
+      <footer class="foot">
+        <span class="keys">Shortcuts: <kbd>T</kbd> task · <kbd>G</kbd> goal · <kbd>P</kbd> program · <kbd>←</kbd><kbd>→</kbd> photos</span>
+        <button class="link-btn" id="signout" type="button" hidden>Sign out</button>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="sheet" class="sheet"></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
